@@ -1,0 +1,371 @@
+[
+  {
+    "type": "assignment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "const_value",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "mime_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "boolean",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "false",
+          "named": true
+        },
+        {
+          "type": "true",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "config",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "events_directive",
+          "named": true
+        },
+        {
+          "type": "http_directive",
+          "named": true
+        },
+        {
+          "type": "server_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "const_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "ip_address",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "events_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "http_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "server_directive",
+          "named": true
+        },
+        {
+          "type": "types_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ip_address",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ipv6_address",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "location_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "location_at",
+          "named": true
+        },
+        {
+          "type": "location_directive",
+          "named": true
+        },
+        {
+          "type": "location_path",
+          "named": true
+        },
+        {
+          "type": "types_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "location_path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "location_path_modifier",
+          "named": true
+        },
+        {
+          "type": "location_path_regex",
+          "named": true
+        },
+        {
+          "type": "path_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "server_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "location_directive",
+          "named": true
+        },
+        {
+          "type": "types_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "types_directive",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "types_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "/",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": ";",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "^~",
+    "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "events",
+    "named": false
+  },
+  {
+    "type": "false",
+    "named": true
+  },
+  {
+    "type": "float",
+    "named": true
+  },
+  {
+    "type": "http",
+    "named": false
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
+    "type": "ipv6_address",
+    "named": true
+  },
+  {
+    "type": "location",
+    "named": false
+  },
+  {
+    "type": "location_at",
+    "named": true
+  },
+  {
+    "type": "location_path_modifier",
+    "named": true
+  },
+  {
+    "type": "location_path_regex",
+    "named": true
+  },
+  {
+    "type": "mime_type",
+    "named": true
+  },
+  {
+    "type": "number",
+    "named": true
+  },
+  {
+    "type": "path_literal",
+    "named": true
+  },
+  {
+    "type": "path_regex",
+    "named": true
+  },
+  {
+    "type": "server",
+    "named": false
+  },
+  {
+    "type": "string_literal",
+    "named": true
+  },
+  {
+    "type": "true",
+    "named": true
+  },
+  {
+    "type": "types",
+    "named": false
+  },
+  {
+    "type": "upstream",
+    "named": false
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
+    "named": false
+  },
+  {
+    "type": "~*",
+    "named": false
+  }
+]
