@@ -92,20 +92,20 @@ module.exports = grammar({
           $.location_path,
         ),
         '{',
-        repeat(choice($.assignment, $.location_directive, $.types_directive)),
+        repeat(choice($.assignment, $.location_directive, $.types_directive, $.rewrite_directive)),
         '}',
       ),
     location_at: ($) => '@' + $.identifier,
     location_path: ($) =>
       seq(
         alias(optional(choice('=', '~', '~*', '^~')), $.location_path_modifier),
-        choice(
-          $._location_path_literal,
-          $._location_path_regex,
-        ),
+        $.path,
       ),
-    _location_path_regex: ($) => alias($.path_regex, $.location_path_regex),
+    _location_pattern: ($) => field('location', alias($.path_pattern, $.location_path_regex)),
     _location_path_literal: ($) => choice('/', $.path_literal),
+    rewrite_directive: ($) => seq(alias('rewrite', $.rewrite_ident), $.path, $.path, optional($.rewrite_flags), ';'),
+    rewrite_flags: ($) => seq($.rewrite_flag, repeat(seq($.rewrite_flag, optional($.rewrite_flag)))),
+    rewrite_flag: () => choice('break', 'last', 'redirect', 'permanent', 'pcre_jit'),
 
     upstream_directive: ($) =>
       seq(
@@ -148,7 +148,7 @@ module.exports = grammar({
         ),
         ';',
       ),
-    assignment_value: ($) => choice($._string_literal, $.path_regex),
+    assignment_value: ($) => choice($._string_literal, $.path),
 
     const_value: ($) =>
       choice(
@@ -157,7 +157,7 @@ module.exports = grammar({
         $.boolean,
         $._string_literal,
         $.identifier,
-        $.ip_address,
+        $.address,
         // $.const_list,
       ),
 
@@ -180,16 +180,51 @@ module.exports = grammar({
 
     _string_literal: ($) => alias(/"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/, $.string_literal),
 
-    identifier: () => /[A-Za-z_][A-Za-z0-9._]*/,
+    _identifier: () => token(/[A-Za-z_][A-Za-z0-9._]*/),
+    // _dynamic_identifier: () => token(/\$\{[A-Za-z_][A-Za-z0-9._]*\}/),
+    dynamic_identifier: ($) => seq('$', $.const_value),
+    identifier: ($) => choice($.dynamic_identifier, $._identifier),
 
     mime_type: () => /[A-Za-z0-9._\/-]+/,
 
-    path_regex: () => /\/[^\/\s]+\/[a-z]*/,
+    path: ($) => choice($.path_literal, $.path_pattern),
+    path_pattern: () => /\/[^\/\s]+\/[a-z]*/,
     path_literal: () => /\/[^\/\s]+/,
 
-    ip_address: ($) => choice($.ipv6_address),
-    // ipv4_address: () => /^(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/,
-    ipv6_address: () => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
+    regex: ($) => seq(
+      '/',
+      field('pattern', $.regex_pattern),
+      token.immediate('/'),
+      optional(field('flags', $.regex_flags)),
+    ),
+
+    regex_pattern: () => token.immediate(prec(-1,
+      repeat1(choice(
+        seq(
+          '[',
+          repeat(choice(
+            seq('\\', /./), // escaped character
+            /[^\]\n\\]/, // any character besides ']' or '\n'
+          )),
+          ']',
+        ), // square-bracket-delimited character class
+        seq('\\', /./), // escaped character
+        /[^/\\\[\n]/, // any character besides '[', '\', '/', '\n'
+      )),
+    )),
+    regex_flags: () => token.immediate(/[a-z]+/),
+
+    // Internet Addresses
+    ipv4_address: () => token(
+      /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/,
+    ),
+    ipv6_address: () => token(
+      // eslint-disable-next-line max-len
+      /\[(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))\]/,
+    ),
+    ip_address: ($) => choice($.ipv4_address, $.ipv6_address),
+    port: () => token(/:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])/),
+    address: ($) => seq($.ip_address, optional($.port)),
 
     comment: () => token(seq('#', /.*/)),
   },
